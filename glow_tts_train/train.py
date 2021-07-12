@@ -4,6 +4,9 @@ import typing
 from pathlib import Path
 
 import torch
+import torchvision
+from torch.utils.tensorboard import SummaryWriter
+from torchvision import datasets, transforms
 from torch.cuda.amp import GradScaler, autocast
 from torch.utils.data import DataLoader
 
@@ -14,6 +17,9 @@ from .optimize import OptimizerType
 from .utils import clip_grad_value_, duration_loss, mle_loss, to_gpu
 
 _LOGGER = logging.getLogger("glow_tts_train")
+
+# Writer will output to ./runs/ directory by default
+writer = SummaryWriter()
 
 # -----------------------------------------------------------------------------
 
@@ -149,6 +155,8 @@ def train_step(
             "Loss: %s (step=%s/%s)", loss_g.item(), batch_idx + 1, steps_per_epoch
         )
         global_step += 1
+        
+        writer.add_scalar('Loss/train', loss_g, epoch)
 
     if all_loss_g:
         avg_loss_g = sum(all_loss_g) / len(all_loss_g)
@@ -158,5 +166,8 @@ def train_step(
             avg_loss_g,
             global_step,
         )
+        
+        writer.add_scalar('Loss/avg', avg_loss_g, global_step)
+        
 
     return global_step
