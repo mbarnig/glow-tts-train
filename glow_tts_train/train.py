@@ -3,10 +3,7 @@ import time
 import typing
 from pathlib import Path
 
-import torch
-import torchvision
-from torch.utils.tensorboard import SummaryWriter
-from torchvision import datasets, transforms
+from tensorboardX import SummaryWriter
 from torch.cuda.amp import GradScaler, autocast
 from torch.utils.data import DataLoader
 
