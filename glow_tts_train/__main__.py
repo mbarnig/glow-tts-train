@@ -11,8 +11,8 @@ from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 
-from .checkpoint import load_checkpoint
-from .config import TrainingConfig
+import checkpoint
+import config
 from .dataset import PhonemeMelCollate, PhonemeMelLoader, load_mels, load_phonemes
 from .ddi import initialize_model
 from .models import ModelType
@@ -103,10 +103,10 @@ def main():
         args.checkpoint = Path(args.checkpoint)
 
     # Load configuration
-    config = TrainingConfig()
+    config = config.TrainingConfig()
     if args.config:
         _LOGGER.debug("Loading configuration(s) from %s", args.config)
-        config = TrainingConfig.load_and_merge(config, args.config)
+        config = config.TrainingConfig.load_and_merge(config, args.config)
 
     config.git_commit = args.git_commit
 
@@ -250,7 +250,7 @@ def main():
 
     if args.checkpoint:
         _LOGGER.debug("Loading checkpoint from %s", args.checkpoint)
-        checkpoint = load_checkpoint(args.checkpoint, config)
+        checkpoint = checkpoint.load_checkpoint(args.checkpoint, config)
         model, optimizer = checkpoint.model, checkpoint.optimizer
         config.learning_rate = checkpoint.learning_rate
         global_step = checkpoint.global_step
