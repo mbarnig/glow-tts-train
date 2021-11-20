@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from .monotonic_align.core import maximum_path_c
 
 def maximum_path(value, mask):
     """ Cython optimised version.
@@ -15,5 +16,5 @@ def maximum_path(value, mask):
 
     t_x_max = mask.sum(1)[:, 0].astype(np.int32)
     t_y_max = mask.sum(2)[:, 0].astype(np.int32)
-    core.maximum_path_c(path, value, t_x_max, t_y_max)
+    maximum_path_c(path, value, t_x_max, t_y_max)
     return torch.from_numpy(path).to(device=device, dtype=dtype)
