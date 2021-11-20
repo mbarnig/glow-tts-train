@@ -11,13 +11,13 @@ from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 
-import checkpoint
-import config
-from .dataset import PhonemeMelCollate, PhonemeMelLoader, load_mels, load_phonemes
-from .ddi import initialize_model
-from .models import ModelType
-from .optimize import OptimizerType
-from .train import train
+from glow_tts_train.checkpoint import load_checkpoint
+from glow_tts_train.config import TrainingConfig
+from glow_tts_train.dataset import PhonemeMelCollate, PhonemeMelLoader, load_mels, load_phonemes
+from glow_tts_train.ddi import initialize_model
+from glow_tts_train.models import ModelType
+from glow_tts_train.optimize import OptimizerType
+from glow_tts_train.train import train
 
 _LOGGER = logging.getLogger("glow_tts_train")
 
@@ -103,10 +103,10 @@ def main():
         args.checkpoint = Path(args.checkpoint)
 
     # Load configuration
-    config = config.TrainingConfig()
+    config = TrainingConfig()
     if args.config:
         _LOGGER.debug("Loading configuration(s) from %s", args.config)
-        config = config.TrainingConfig.load_and_merge(config, args.config)
+        config = TrainingConfig.load_and_merge(config, args.config)
 
     config.git_commit = args.git_commit
 
@@ -250,7 +250,7 @@ def main():
 
     if args.checkpoint:
         _LOGGER.debug("Loading checkpoint from %s", args.checkpoint)
-        checkpoint = checkpoint.load_checkpoint(args.checkpoint, config)
+        checkpoint = load_checkpoint(args.checkpoint, config)
         model, optimizer = checkpoint.model, checkpoint.optimizer
         config.learning_rate = checkpoint.learning_rate
         global_step = checkpoint.global_step
