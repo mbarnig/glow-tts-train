@@ -230,6 +230,7 @@ class InvConvNear(nn.Module):
         self.no_jacobian = no_jacobian
         self.weight_inv: typing.Optional[torch.Tensor] = None
 
+        # https://pytorch.org/docs/stable/generated/torch.qr.html
         w_init = torch.linalg.qr(torch.FloatTensor(self.n_split, self.n_split).normal_())[0]
         if torch.det(w_init) < 0:
             w_init[:, 0] = -1 * w_init[:, 0]
