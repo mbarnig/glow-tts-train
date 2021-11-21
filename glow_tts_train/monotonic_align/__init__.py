@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-import core.maximum_path_c
+from .core import maximum_path_c
 
 def maximum_path(value, mask):
     """ Cython optimised version.
